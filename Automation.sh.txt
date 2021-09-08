@@ -1,0 +1,16 @@
+s3_bucket="upgradsarmishtha"
+myname="Sarmishtha"
+timestamp="01212021-101010"
+sudo apt update -y
+if ! dpkg -s apache2 > /dev/null; then
+   echo -e "Apache2 is not installed"
+   sudo apt-get install apache2  
+fi
+service httpd status &> /dev/null || service httpd start
+tar -cvf Sarmishtha-httpd-logs-01212021-101010.tar  /var/log/apache2/error.log
+tar -cvf Sarmishtha-httpd-logs-01212021-101011.tar /var/log/apache2/access.log
+mv Sarmishtha-httpd-logs-01212021-101010.tar. /tmp/ 
+mv Sarmishtha-httpd-logs-01212021-101011.tar. /tmp/ 
+aws s3 \
+cp /tmp/${myname}-httpd-logs-${timestamp}.tar \
+s3://${s3_bucket}/${myname}-httpd-logs-${timestamp}.tar
